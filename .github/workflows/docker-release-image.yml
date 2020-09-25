@@ -20,6 +20,7 @@ jobs:
     - name: Build the Docker Base image
       run: docker build --memory 8G --tag buildtools-optsrv:base --file base.Dockerfile .
     - name: Login to Docker Hub
+      shell: cmd
       run: docker login -u devatkc -p ${{ secrets.DOCKER_PASSWORD }}
     - name: Tag the Docker Base image
       run: | 
@@ -35,6 +36,7 @@ jobs:
     - name: Build the Docker Build image
       run: docker build --memory 8G --tag buildtools-optsrv --file build.Dockerfile .
     - name: Login to Docker Hub
+      shell: cmd
       run: docker login -u devatkc -p ${{ secrets.DOCKER_PASSWORD }}
     - name: Tag the Docker Build image
       run: | 
