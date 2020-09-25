@@ -16,4 +16,10 @@ RUN C:\TEMP\vs_buildtools.exe --quiet --wait --norestart --nocache `
     --add Microsoft.VisualStudio.Component.VC.Tools.x86.x64 `
     --add Microsoft.VisualStudio.Component.Windows10SDK.18362 `
  || IF "%ERRORLEVEL%"=="3010" EXIT 0
- 
+
+# Download odb
+ADD https://www.codesynthesis.com/download/odb/2.4/odb-2.4.0-i686-windows.zip C:\
+
+# Unzip odb
+RUN cd C:\ && `
+tar -xf odb-2.4.0-i686-windows.zip
