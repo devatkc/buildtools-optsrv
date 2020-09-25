@@ -1,0 +1,24 @@
+name: Docker Build Image CI
+
+on:
+  push:
+    branches: [ master ]
+    paths:
+      - 'build.Dockerfile'
+      - '**/docker-build-image.yml'
+
+jobs:
+  build_and_push:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build the Docker image
+      run: docker build --memory 8G --tag buildtools-optsrv --file build.Dockerfile .
+    - name: Login to Docker Hub
+      run: docker login -u devatkc -p ${{ secrets.DOCKER_PASSWORD }}
+    - name: Tag the Docker image
+      run: docker tag buildtools-optsrv devatkc/buildtools-optsrv
+    - name: Push the Docker image
+      run: docker push devatkc/buildtools-optsrv
+    - name: Logout from Docker Hub
+      run: docker logout

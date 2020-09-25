@@ -1,0 +1,48 @@
+name: Docker Release Image CI
+
+on:
+  release: 
+    types: [published]
+
+jobs:
+  build_and_push:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Get version
+      shell: cmd
+      run: get_version.bat ${{ github.ref }} > version.txt
+    - name: Set version
+      run: Write-Output "::set-env name=RELEASE_VERSION::$(type version.txt)"
+    - name: Echo version
+      run: Write-Output "We're going to release $env:RELEASE_VERSION"
+
+    - name: Build the Docker Base image
+      run: docker build --memory 8G --tag buildtools-optsrv:base --file base.Dockerfile .
+    - name: Login to Docker Hub
+      run: docker login -u devatkc -p ${{ secrets.DOCKER_PASSWORD }}
+    - name: Tag the Docker Base image
+      run: | 
+        docker tag buildtools-optsrv:base devatkc/buildtools-optsrv:base
+        docker tag buildtools-optsrv:base devatkc/buildtools-optsrv:base${{ env.RELEASE_VERSION }}
+    - name: Push the Docker Base image
+      run: | 
+        docker push devatkc/buildtools-optsrv:base
+        docker push devatkc/buildtools-optsrv:base${{ env.RELEASE_VERSION }}
+    - name: Logout from Docker Hub
+      run: docker logout
+
+    - name: Build the Docker Build image
+      run: docker build --memory 8G --tag buildtools-optsrv --file build.Dockerfile .
+    - name: Login to Docker Hub
+      run: docker login -u devatkc -p ${{ secrets.DOCKER_PASSWORD }}
+    - name: Tag the Docker Build image
+      run: | 
+        docker tag buildtools-optsrv devatkc/buildtools-optsrv
+        docker tag buildtools-optsrv devatkc/buildtools-optsrv:${{ env.RELEASE_VERSION }}
+    - name: Push the Docker Build image
+      run: | 
+        docker push devatkc/buildtools-optsrv
+        docker push devatkc/buildtools-optsrv:${{ env.RELEASE_VERSION }}
+    - name: Logout from Docker Hub
+      run: docker logout
