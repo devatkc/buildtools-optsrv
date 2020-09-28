@@ -1,7 +1,7 @@
 # escape=`
 
 # Use the latest Windows Server Core image
-FROM mcr.microsoft.com/windows/servercore:ltsc2019
+FROM jenkins/agent:jdk11-windowsservercore-1809
 
 # Restore the default Windows shell for correct batch processing.
 SHELL ["cmd", "/S", "/C"]
@@ -23,9 +23,3 @@ ADD https://www.codesynthesis.com/download/odb/2.4/odb-2.4.0-i686-windows.zip C:
 # Unzip odb
 RUN cd C:\ && `
 tar -xf odb-2.4.0-i686-windows.zip
-
-# Download git for Windows
-ADD https://github.com/git-for-windows/git/releases/download/v2.28.0.windows.1/Git-2.28.0-64-bit.exe C:\TEMP\Git-2.28.0-64-bit.exe
-
-# Install git
-RUN C:\TEMP\Git-2.28.0-64-bit.exe /VERYSILENT /NORESTART /NOCANCEL /SP- /CLOSEAPPLICATIONS /RESTARTAPPLICATIONS /COMPONENTS="icons,ext\reg\shellhere,assoc,assoc_sh"
